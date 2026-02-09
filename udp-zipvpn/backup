@@ -1,0 +1,3 @@
+#!/bin/bash
+zip /root/udp-zipvpn-backup.zip /etc/udp-zipvpn/users.db
+/usr/bin/udp-zipvpn/notify "Backup UDP-ZipVPN berhasil"

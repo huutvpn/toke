@@ -1,0 +1,63 @@
+#!/bin/bash
+clear
+DOMAIN=$(cat /etc/udp-zipvpn/domain)
+IP=$(curl -s ifconfig.me)
+ISP=$(curl -s ipinfo.io/org)
+CPU=$(top -bn1 | awk '/Cpu/ {print $2"%"}')
+RAM=$(free | awk '/Mem/ {printf "%.1f%%",$3/$2*100}')
+
+echo -e "\033[0;36m════════════════════════════════════"
+echo "        UDP ZIPVPN MENU"
+echo "════════════════════════════════════\033[0m"
+echo "Domain : $DOMAIN"
+echo "IP     : $IP"
+echo "ISP    : $ISP"
+echo "CPU/RAM: $CPU / $RAM"
+echo "------------------------------------"
+echo "[01] Create Akun"
+echo "[02] Delete Akun"
+echo "[03] Limit IP"
+echo "[04] Limit Kuota"
+echo "[05] Restart UDP"
+echo "[06] Backup (Telegram)"
+echo "[07] Restore (Telegram)"
+echo "[00] Exit"
+read -p "Pilih: " x
+
+DB=/etc/udp-zipvpn/users.db
+
+case $x in
+1)
+ read -p "User: " u
+ read -p "Pass: " p
+ read -p "Limit IP: " ip
+ read -p "Limit Kuota(GB): " q
+ echo "$u:$p:$ip:$q" >> $DB
+ /usr/bin/udp-zipvpn/notify "Akun dibuat: $u"
+;;
+2)
+ read -p "User: " u
+ sed -i "/^$u:/d" $DB
+ /usr/bin/udp-zipvpn/notify "Akun dihapus: $u"
+;;
+3)
+ read -p "User: " u
+ read -p "Limit IP baru: " ip
+ sed -i "s/^$u:\([^:]*\):[^:]*:\(.*\)/$u:\1:$ip:\2/" $DB
+;;
+4)
+ read -p "User: " u
+ read -p "Limit Kuota baru: " q
+ sed -i "s/^$u:\([^:]*\):\(.*\):[^:]*/$u:\1:\2:$q/" $DB
+;;
+5)
+ systemctl restart udp-zipvpn
+;;
+6)
+ /usr/bin/udp-zipvpn/backup
+;;
+7)
+ /usr/bin/udp-zipvpn/restore
+;;
+0) exit ;;
+esac

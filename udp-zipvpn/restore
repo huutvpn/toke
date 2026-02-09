@@ -1,0 +1,4 @@
+#!/bin/bash
+unzip -o /root/udp-zipvpn-backup.zip -d /
+/usr/bin/udp-zipvpn/notify "Restore UDP-ZipVPN berhasil"
+systemctl restart udp-zipvpn
