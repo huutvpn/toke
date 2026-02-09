@@ -1,0 +1,10 @@
+[Unit]
+Description=UDP ZipVPN
+After=network.target
+
+[Service]
+ExecStart=/etc/udp-zipvpn/udp-server.sh
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
